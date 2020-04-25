@@ -25,5 +25,7 @@ app.delete('/tenda/:kode', tendaController.hapusTenda);
 
 app.post('/login/user', authController.loginUser);
 app.post('/register/user', authController.registerUser);
+app.post('/login/petugas', authController.loginPetugas);
+app.post('/register/petugas', authController.registerPetugas);
 
 module.exports = app;
