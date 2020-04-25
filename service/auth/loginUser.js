@@ -27,6 +27,7 @@ module.exports = loginUser = async (conn, data, cb) => {
           } else if (isMatch) {
             let token = jwt.sign(
               {
+                id: userku.kd_user,
                 nama: userku.nm_user,
                 email: userku.email,
                 role: 0,

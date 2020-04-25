@@ -27,6 +27,7 @@ module.exports = loginPetugas = async (conn, data, cb) => {
           } else if (isMatch) {
             let token = jwt.sign(
               {
+                id: petugasku.kd_petugas,
                 nama: petugasku.nm_petugas,
                 email: petugasku.email,
                 role: 1,

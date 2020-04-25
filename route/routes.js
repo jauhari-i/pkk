@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
+
 const userController = require('../controller/userController');
 const petugasController = require('../controller/petugasController');
 const tendaController = require('../controller/tendaController');
 const authController = require('../controller/authController');
+const pinjamController = require('../controller/pinjamController');
+
+const cekToken = require('../config/cekToken');
 
 app.post('/user', userController.tambahUser);
 app.get('/user', userController.semuaUser);
@@ -24,8 +28,11 @@ app.put('/tenda/:kode', tendaController.editTenda);
 app.delete('/tenda/:kode', tendaController.hapusTenda);
 
 app.post('/login/user', authController.loginUser);
-app.post('/register/user', authController.registerUser);
 app.post('/login/petugas', authController.loginPetugas);
+app.post('/register/user', authController.registerUser);
 app.post('/register/petugas', authController.registerPetugas);
+
+app.get('/pinjam', pinjamController.semuaPinjam);
+app.post('/pinjam/:tenda', [cekToken], pinjamController.tambahPinjam);
 
 module.exports = app;
