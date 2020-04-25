@@ -31,9 +31,8 @@ module.exports = registerPetugas = async (conn, data, cb) => {
             cb(err);
           } else {
             await conn.query(
-              'INSERT INTO petugas (nm_petugas, email, password) VALUE (?,?,?)'[
-                (data.nm_petugas, data.email, data.password, hashed)
-              ],
+              'INSERT INTO petugas (nm_petugas, email, password) VALUE (?,?,?)',
+              [data.nm_petugas, data.email, hashed],
               (err, inserted) => {
                 if (err) {
                   cb(err);

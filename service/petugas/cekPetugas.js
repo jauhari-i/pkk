@@ -1,26 +1,17 @@
-module.exports = async function cekPetugas(conn, id, cb) {
-    if (!id) {
-        cb("Kode Petugas tidak ditemukan");
-    } else {
-        await conn.query(
-            "SELECT * FROM petugas WHERE kd_petugas = ?",
-            id,
-            (err, petugas) => {
-                if (err) {
-                    cb(err);
-                } else if (petugas.length > 0) {
-                    cb(null, {
-                        status: 200,
-                        data: petugas
-                    });
-                } else {
-                    cb({
-                        status: 404,
-                        data: null,
-                        msg: "Data petugas tidak ditemukan"
-                    });
-                }
-            }
-        );
-    }
+module.exports = async function cekPetugas(conn, email, cb) {
+  if (!email) {
+    cb('Kode Petugas tidak ditemukan');
+  } else {
+    await conn.query('SELECT * FROM petugas WHERE email = ?', email, (err, petugas) => {
+      if (err) {
+        cb(err);
+      } else if (petugas.length > 0) {
+        cb({
+          error: 'Email telah digunakan',
+        });
+      } else {
+        cb(null, true);
+      }
+    });
+  }
 };
