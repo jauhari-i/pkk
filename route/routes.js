@@ -24,5 +24,6 @@ app.put('/tenda/:kode', tendaController.editTenda);
 app.delete('/tenda/:kode', tendaController.hapusTenda);
 
 app.post('/login/user', authController.loginUser);
+app.post('/register/user', authController.registerUser);
 
 module.exports = app;
