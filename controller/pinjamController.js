@@ -5,6 +5,7 @@ const semuaPinjam = require('../service/pinjam/semuaPinjam');
 const satuPinjam = require('../service/pinjam/satuPinjam');
 const ambil = require('../service/pinjam/ambil');
 const kembali = require('../service/pinjam/kembali');
+const userPinjam = require('../service/pinjam/userPinjam');
 
 controller.tambahPinjam = (req, res) => {
   req.getConnection((err, conn) => {
@@ -53,6 +54,25 @@ controller.satuPinjam = (req, res) => {
         kd_pinjam: req.params.kode,
       };
       satuPinjam(conn, data, (err, result) => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+};
+
+controller.userPinjam = (req, res) => {
+  req.getConnection((err, conn) => {
+    if (err) {
+      res.send(err);
+    } else {
+      let data = {
+        kd_user: req.params.user,
+      };
+      userPinjam(conn, data, (err, result) => {
         if (err) {
           res.json(err);
         } else {
