@@ -3,6 +3,8 @@ const controller = {};
 const tambahPinjam = require('../service/pinjam/tambahPinjam');
 const semuaPinjam = require('../service/pinjam/semuaPinjam');
 const satuPinjam = require('../service/pinjam/satuPinjam');
+const ambil = require('../service/pinjam/ambil');
+const kembali = require('../service/pinjam/kembali');
 
 controller.tambahPinjam = (req, res) => {
   req.getConnection((err, conn) => {
@@ -51,6 +53,42 @@ controller.satuPinjam = (req, res) => {
         kd_pinjam: req.params.kode,
       };
       satuPinjam(conn, data, (err, result) => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+};
+
+controller.ambil = (req, res) => {
+  req.getConnection((err, conn) => {
+    if (err) {
+      res.send(err);
+    } else {
+      let data = {
+        kd_pinjam: req.params.kode,
+        kd_petugas: req.params.petugas,
+      };
+      ambil(conn, data, (err, result) => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+};
+
+controller.kembali = (req, res) => {
+  req.getConnection((err, conn) => {
+    if (err) {
+      res.send(err);
+    } else {
+      kembali(conn, req.params.kode, (err, result) => {
         if (err) {
           res.json(err);
         } else {

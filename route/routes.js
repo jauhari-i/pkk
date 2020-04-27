@@ -35,5 +35,7 @@ app.post('/register/petugas', authController.registerPetugas);
 app.get('/pinjam', pinjamController.semuaPinjam);
 app.get('/pinjam/:kode', pinjamController.satuPinjam);
 app.post('/pinjam/:tenda', [cekToken], pinjamController.tambahPinjam);
+app.get('/ambil/:kode/:petugas', pinjamController.ambil);
+app.get('/kembali/:kode', pinjamController.kembali);
 
 module.exports = app;

@@ -1,3 +1,5 @@
+const cekPinjam = require('./cekPinjam');
+
 const cekStatus = (status, cb) => {
   if (status === 0) {
     cb(null, {
@@ -73,12 +75,56 @@ module.exports = satuPinjam = async (conn, datas, cb) => {
         let fixedData = [];
         pinjamData.map((item, i) => {
           cekStatus(item.status, (err, stats) => {
-            if (item.kd_petugas) {
-              // jika ada petugas
-              hasPetugas(conn, item.kd_petugas, (err, petugas) => {
-                if (err) {
-                  return cb(err);
+            cekPinjam(conn, item.tgl, item.kd_pinjam, item.status, item.durasi, (err, kode) => {
+              if (err) {
+                cb(err);
+              } else {
+                if (item.kd_petugas) {
+                  // jika ada petugas
+                  hasPetugas(conn, item.kd_petugas, (err, petugas) => {
+                    if (err) {
+                      return cb(err);
+                    } else {
+                      fixedData.push({
+                        primary: {
+                          kd_pinjam: item.kd_pinjam,
+                          kd_user: item.kd_user,
+                          kd_tenda: item.kd_tenda,
+                          kd_petugas: item.kd_petugas,
+                        },
+                        userData: {
+                          nm_user: item.nm_user,
+                          email: item.email,
+                        },
+                        tendaData: {
+                          nm_tenda: item.nm_tenda,
+                          durasi: item.durasi,
+                          tarif: item.tarif,
+                          stok: item.stok,
+                        },
+                        petugasData: {
+                          nm_petugas: petugas.nm_petugas,
+                          email: petugas.email,
+                        },
+                        main: {
+                          kode: item.kode,
+                          total: item.total,
+                          status: stats,
+                          tgl: item.tgl,
+                          bukti: item.bukti,
+                          pinjam_status: kode,
+                        },
+                      });
+                    }
+                    if (fixedData.length === pinjamData.length) {
+                      return cb(null, {
+                        status: 200,
+                        data: fixedData,
+                      });
+                    }
+                  });
                 } else {
+                  // jika tida ada petugas
                   fixedData.push({
                     primary: {
                       kd_pinjam: item.kd_pinjam,
@@ -97,8 +143,8 @@ module.exports = satuPinjam = async (conn, datas, cb) => {
                       stok: item.stok,
                     },
                     petugasData: {
-                      nm_petugas: petugas.nm_petugas,
-                      email: petugas.email,
+                      nm_petugas: null,
+                      email: null,
                     },
                     main: {
                       kode: item.kode,
@@ -106,48 +152,12 @@ module.exports = satuPinjam = async (conn, datas, cb) => {
                       status: stats,
                       tgl: item.tgl,
                       bukti: item.bukti,
+                      pinjam_status: kode,
                     },
                   });
                 }
-                if (fixedData.length === pinjamData.length) {
-                  return cb(null, {
-                    status: 200,
-                    data: fixedData,
-                  });
-                }
-              });
-            } else {
-              // jika tida ada petugas
-              fixedData.push({
-                primary: {
-                  kd_pinjam: item.kd_pinjam,
-                  kd_user: item.kd_user,
-                  kd_tenda: item.kd_tenda,
-                  kd_petugas: item.kd_petugas,
-                },
-                userData: {
-                  nm_user: item.nm_user,
-                  email: item.email,
-                },
-                tendaData: {
-                  nm_tenda: item.nm_tenda,
-                  durasi: item.durasi,
-                  tarif: item.tarif,
-                  stok: item.stok,
-                },
-                petugasData: {
-                  nm_petugas: null,
-                  email: null,
-                },
-                main: {
-                  kode: item.kode,
-                  total: item.total,
-                  status: stats,
-                  tgl: item.tgl,
-                  bukti: item.bukti,
-                },
-              });
-            }
+              }
+            });
           });
           if (fixedData.length === pinjamData.length) {
             return cb(null, {
