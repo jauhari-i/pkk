@@ -1,4 +1,5 @@
 const cekPinjam = require('./cekPinjam');
+const moment = require('moment');
 
 const cekStatus = (status, cb) => {
   if (status === 0) {
@@ -71,6 +72,7 @@ module.exports = semuaPinjam = async (conn, cb) => {
           tarif: dat.tarif,
           stok: dat.stok,
         }));
+
         let fixedData = [];
         pinjamData.map((item, i) => {
           cekStatus(item.status, (err, stats) => {
@@ -109,7 +111,7 @@ module.exports = semuaPinjam = async (conn, cb) => {
                           kode: item.kode,
                           total: item.total,
                           status: stats,
-                          tgl: item.tgl,
+                          tgl: moment(item.tgl).format('LLLL'),
                           bukti: item.bukti,
                           pinjam_status: kode,
                         },
@@ -149,7 +151,7 @@ module.exports = semuaPinjam = async (conn, cb) => {
                       kode: item.kode,
                       total: item.total,
                       status: stats,
-                      tgl: item.tgl,
+                      tgl: moment(item.tgl).format('LLLL'),
                       bukti: item.bukti,
                       pinjam_status: kode,
                     },

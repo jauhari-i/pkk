@@ -9,6 +9,7 @@ const pinjamController = require('../controller/pinjamController');
 
 const cekToken = require('../config/cekToken');
 const cekPetugas = require('../config/cekPetugas');
+const tendaImg = require('../upload/script/tendaImg');
 
 app.post('/user', [cekToken, cekPetugas], userController.tambahUser);
 app.get('/user', [cekToken, cekPetugas], userController.semuaUser);
@@ -22,18 +23,19 @@ app.get('/petugas/:kode', [cekToken, cekPetugas], petugasController.satuPetugas)
 app.put('/petugas/:kode', [cekToken, cekPetugas], petugasController.editPetugas);
 app.delete('/petugas/:kode', [cekToken, cekPetugas], petugasController.hapusPetugas);
 
-app.post('/tenda', [cekToken, cekPetugas], tendaController.tambahTenda);
+app.post('/tenda', [cekToken, cekPetugas, tendaImg], tendaController.tambahTenda);
 app.get('/tenda', tendaController.semuaTenda);
 app.get('/tenda/:kode', tendaController.satuTenda);
 app.put('/tenda/:kode', [cekToken, cekPetugas], tendaController.editTenda);
 app.delete('/tenda/:kode', [cekToken, cekPetugas], tendaController.hapusTenda);
+app.get('/tenda/img/:kode', tendaController.getImg);
 
 app.post('/login/user', authController.loginUser);
 app.post('/login/petugas', authController.loginPetugas);
 app.post('/register/user', authController.registerUser);
 app.post('/register/petugas', authController.registerPetugas);
 
-app.get('/pinjam', [cekToken], pinjamController.semuaPinjam);
+app.get('/pinjam', [cekToken, cekPetugas], pinjamController.semuaPinjam);
 app.get('/pinjam/user/:user', [cekToken], pinjamController.userPinjam);
 app.get('/pinjam/:kode', [cekToken], pinjamController.satuPinjam);
 app.post('/pinjam/:tenda', [cekToken], pinjamController.tambahPinjam);

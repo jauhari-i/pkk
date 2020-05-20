@@ -16,7 +16,7 @@ module.exports = cekPinjam = (conn, tgl, id, status, durasi, cb) => {
       if (err) {
         return cb(err);
       } else {
-        return cb(null, del);
+        return cb(null, { stats: 'Kode ekspired' });
       }
     });
   } else if (status === 1 && date.dateToday > datePengembalian) {
@@ -24,7 +24,7 @@ module.exports = cekPinjam = (conn, tgl, id, status, durasi, cb) => {
       if (err) {
         return cb(err);
       } else {
-        return cb(null, upd);
+        return cb(null, { stats: 'Belum Dikembalikan' });
       }
     });
   } else {

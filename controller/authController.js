@@ -11,6 +11,7 @@ controller.loginUser = (req, res) => {
       res.send(err);
     } else {
       let data = req.body;
+      console.log(data);
       loginUser(conn, data, (err, result) => {
         if (err) {
           res.json(err);
