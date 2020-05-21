@@ -5,24 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Tendaku</title>
-    <link rel="icon" href="img/favicon.png" />
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <!-- animate CSS -->
-    <link rel="stylesheet" href="css/animate.css" />
-    <!-- owl carousel CSS -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css" />
-    <!-- font awesome CSS -->
-    <link rel="stylesheet" href="css/all.css" />
-    <!-- flaticon CSS -->
-    <link rel="stylesheet" href="css/flaticon.css" />
-    <link rel="stylesheet" href="css/themify-icons.css" />
-    <!-- font awesome CSS -->
-    <link rel="stylesheet" href="css/magnific-popup.css" />
-    <!-- swiper CSS -->
-    <link rel="stylesheet" href="css/slick.css" />
-    <!-- style CSS -->
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="/img/favicon.png" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/animate.css" />
+    <link rel="stylesheet" href="/css/owl.carousel.min.css" />
+    <link rel="stylesheet" href="/css/lightslider.min.css" />
+    <link rel="stylesheet" href="/css/all.css" />
+    <link rel="stylesheet" href="/css/flaticon.css" />
+    <link rel="stylesheet" href="/css/magnific-popup.css" />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
 
   <body>
@@ -32,7 +23,7 @@
         <div class="row align-items-center">
           <div class="col-lg-12">
             <nav class="navbar navbar-expand-lg navbar-light">
-              <a class="navbar-brand" href="/"> <img src="img/logo.png" alt="logo" /> </a>
+              <a class="navbar-brand" href="/"> <img src="/img/logo.png" alt="logo" /> </a>
               <button
                 class="navbar-toggler"
                 type="button"
@@ -116,64 +107,80 @@
             <div class="breadcrumb_iner">
               <div class="breadcrumb_iner_item">
                 <h2>Histori Peminjaman</h2>
-                <p>Tendaku <span>-</span> Histori Peminjaman</p>
+                <p>
+                  <%= data[0].main.kode %>
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <!-- breadcrumb start -->
+    <!-- breadcrumb start-->
+    <!--================End Home Banner Area =================-->
 
-    <!--================login_part Area =================-->
-    <section class="login_part padding_top">
+    <!--================Single Product Area =================-->
+    <div class="product_image_area section_padding">
       <div class="container">
-        <div class="align-items-center">
-          <h1 class="my-3">Histori</h1>
-          <% if(data) {%>
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Kode</th>
-                  <th>Status</th>
-                  <th>Tenda</th>
-                  <th>Petugas</th>
-                  <th>Total</th>
-                  <th>Tgl</th>
-                  <th>Opsi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%for(var i = 0; i< data.length; i++){ %>
-                <tr>
-                  <td><%= i+1%></td>
-                  <td><%= data[i].main.kode %></td>
-                  <td><%= data[i].main.status.status%></td>
-                  <td><%= data[i].tendaData.nm_tenda %></td>
-                  <td><%= data[i].petugasData.nm_petugas %></td>
-                  <td>Rp. <%= data[i].main.total%></td>
-                  <td><%= moment(data[i].main.tgl).format('LLLL') %></td>
-                  <td>
-                    <a
-                      href="/histori/<%= data[i].primary.kd_pinjam %>"
-                      class="genric-btn primary circle small"
-                      >Detail</a
-                    >
-                  </td>
-                </tr>
-                <%}%>
-              </tbody>
-            </table>
+        <div class="row s_product_inner justify-content-between">
+          <div class="col-lg-6 col-xl-6">
+            <div class="product_slider_img">
+              <div id="vertical">
+                <div data-thumb="/api/tenda/img/<%= data[0].primary.kd_tenda %>">
+                  <img src="/api/tenda/img/<%= data[0].primary.kd_tenda %>" />
+                </div>
+                <div data-thumb="/api/tenda/img/<%= data[0].primary.kd_tenda %>">
+                  <img src="/api/tenda/img/<%= data[0].primary.kd_tenda %>" />
+                </div>
+                <div data-thumb="/api/tenda/img/<%= data[0].primary.kd_tenda %>">
+                  <img src="/api/tenda/img/<%= data[0].primary.kd_tenda %>" />
+                </div>
+              </div>
+            </div>
           </div>
-          <%}else{%>
-          <p>Tidak ada data peminjaman</p>
-          <%} %>
+          <div class="col-lg-6 col-xl-6">
+            <div class="typography">
+              <h2><%= data[0].tendaData.nm_tenda %></h2>
+              <p></p>
+              <hr />
+              <h2>Rp. <%= data[0].main.total %></h2>
+              <ul class="unordered-list">
+                <li>
+                  <p><span>Jumlah</span> : <%= data[0].main.jumlah %> unit</p>
+                </li>
+                <li>
+                  <p><span>Durasi</span>: <%= data[0].tendaData.durasi %> hari</p>
+                </li>
+                <li>
+                  <p><span>Status</span> : <%= data[0].main.status.status %></p>
+                </li>
+                <% if(data[0].main.pinjam_status.stats === 'aktif'){ %>
+                <li>
+                  <p><span>Kode</span> : <%= data[0].main.kode %></p>
+                </li>
+                <li>
+                  <p><span>Masa aktif kode</span> : <%= data[0].main.pinjam_status.tenggat%></p>
+                </li>
+                <% } else { %>
+                <li>
+                  <p><span>Kode</span> : <%= data[0].main.kode %></p>
+                </li>
+                <li>
+                  <p>
+                    <span>Tgl Kembali</span> : <%=
+                    moment(data[0].main.pinjam_status.tgl_pengembalian).calendar() %>
+                  </p>
+                </li>
+                <%}%>
+              </ul>
+              <div class="mt-5 card_area d-flex justify-content-between align-items-center">
+                <a href="/histori" class="btn_1">Kembali</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
-    <!--================login_part end =================-->
+    </div>
 
     <!--::footer_part start::-->
     <footer class="footer_part">
@@ -182,43 +189,39 @@
           <div class="row">
             <div class="col-lg-8">
               <div class="copyright_text">
-                <p>
-                  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                  Copyright &copy;
-                  <a target="_blank">Tendaku</a>
+                <P
+                  ><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                  Copyright &copy; Tendaku
                   <script>
                     document.write(new Date().getFullYear());
                   </script>
-                  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                </p>
+                  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></P
+                >
               </div>
             </div>
           </div>
         </div>
       </div>
     </footer>
-    <!--::footer_part end::-->
-
-    <!-- jquery plugins here-->
-    <!-- jquery -->
-    <script src="js/jquery-1.12.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.magnific-popup.js"></script>
-    <script src="js/swiper.min.js"></script>
-    <script src="js/masonry.pkgd.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/jquery.nice-select.min.js"></script>
-    <script src="js/slick.min.js"></script>
-    <script src="js/jquery.counterup.min.js"></script>
-    <script src="js/waypoints.min.js"></script>
-    <script src="js/contact.js"></script>
-    <script src="js/jquery.ajaxchimp.min.js"></script>
-    <script src="js/jquery.form.js"></script>
-    <script src="js/jquery.validate.min.js"></script>
-    <script src="js/mail-script.js"></script>
-    <script src="js/stellar.js"></script>
-    <script src="js/price_rangs.js"></script>
-    <script src="js/custom.js"></script>
+    <script src="/js/jquery-1.12.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.magnific-popup.js"></script>
+    <script src="/js/lightslider.min.js"></script>
+    <script src="/js/masonry.pkgd.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/jquery.nice-select.min.js"></script>
+    <script src="/js/slick.min.js"></script>
+    <script src="/js/swiper.jquery.js"></script>
+    <script src="/js/jquery.counterup.min.js"></script>
+    <script src="/js/waypoints.min.js"></script>
+    <script src="/js/contact.js"></script>
+    <script src="/js/jquery.ajaxchimp.min.js"></script>
+    <script src="/js/jquery.form.js"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+    <script src="/js/mail-script.js"></script>
+    <script src="/js/stellar.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/custom.js"></script>
   </body>
 </html>

@@ -61,6 +61,7 @@ module.exports = satuPinjam = async (conn, datas, cb) => {
           kd_user: dat.kd_user,
           kd_petugas: dat.kd_petugas,
           kode: dat.kode,
+          jumlah: dat.jumlah_pinjam,
           total: dat.total,
           status: dat.status,
           tgl: dat.tgl,
@@ -113,6 +114,7 @@ module.exports = satuPinjam = async (conn, datas, cb) => {
                           tgl: item.tgl,
                           bukti: item.bukti,
                           pinjam_status: kode,
+                          jumlah: item.jumlah,
                         },
                       });
                     }
@@ -153,6 +155,7 @@ module.exports = satuPinjam = async (conn, datas, cb) => {
                       tgl: item.tgl,
                       bukti: item.bukti,
                       pinjam_status: kode,
+                      jumlah: item.jumlah,
                     },
                   });
                 }

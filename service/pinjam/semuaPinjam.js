@@ -61,6 +61,7 @@ module.exports = semuaPinjam = async (conn, cb) => {
           kd_user: dat.kd_user,
           kd_petugas: dat.kd_petugas,
           kode: dat.kode,
+          jumlah: dat.jumlah_pinjam,
           total: dat.total,
           status: dat.status,
           tgl: dat.tgl,
@@ -114,6 +115,7 @@ module.exports = semuaPinjam = async (conn, cb) => {
                           tgl: moment(item.tgl).format('LLLL'),
                           bukti: item.bukti,
                           pinjam_status: kode,
+                          jumlah: item.jumlah,
                         },
                       });
                     }
@@ -154,6 +156,7 @@ module.exports = semuaPinjam = async (conn, cb) => {
                       tgl: moment(item.tgl).format('LLLL'),
                       bukti: item.bukti,
                       pinjam_status: kode,
+                      jumlah: item.jumlah,
                     },
                   });
                 }

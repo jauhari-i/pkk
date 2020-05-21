@@ -43,13 +43,15 @@ module.exports = tambahPinjam = async (conn, data, cb) => {
         msg: kurang.error,
       });
     } else if (tenda) {
+      let total = Number(tenda.tarif) * data.jumlah;
       await conn.query(
-        'INSERT INTO pinjam (kd_tenda,kd_user,kd_petugas,kode,total,status,tgl,bukti) VALUES (?,?,NULL,?,?,4,NOW(),?)',
-        [data.tenda, data.user, '', data.total, ''],
+        'INSERT INTO pinjam (kd_tenda,kd_user,kd_petugas,kode,jumlah_pinjam,total,status,tgl,bukti) VALUES (?,?,NULL,?,?,?,4,NOW(),?)',
+        [data.tenda, data.user, '', data.jumlah, total, ''],
         (err, inserted) => {
           if (err) {
             cb(err);
           } else {
+            let stokNow = tenda.stok - data.jumlah;
             let pinjamId = inserted.insertId;
             let kodePinjam =
               kode(pinjamId) + kode(data.tenda) + kode(data.user) + kode(data.jumlah);
@@ -60,11 +62,22 @@ module.exports = tambahPinjam = async (conn, data, cb) => {
                 if (err) {
                   cb(err);
                 } else {
-                  cb(null, {
-                    status: 200,
-                    kode_pinjam: kodePinjam,
-                    total: Number(data.total),
-                  });
+                  conn.query(
+                    'UPDATE tenda SET stok = ? WHERE kd_tenda = ?',
+                    [stokNow, data.tenda],
+                    (err, updated) => {
+                      if (err) {
+                        cb(err);
+                      } else {
+                        cb(null, {
+                          status: 200,
+                          kode_pinjam: kodePinjam,
+                          id: pinjamId,
+                          total: Number(total),
+                        });
+                      }
+                    }
+                  );
                 }
               }
             );

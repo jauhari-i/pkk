@@ -79,7 +79,6 @@ app.post('/login', (req, res) => {
     email: req.body.email,
     password: req.body.password,
   };
-  res.clearCookie('msgLogin');
   fetch('http://localhost:3000/api/login/user', {
     method: 'POST',
     body: JSON.stringify(body),
@@ -94,6 +93,7 @@ app.post('/login', (req, res) => {
           body: body,
         });
       } else {
+        res.clearCookie('msgLogin');
         res.cookie('token', result.token, { httpOnly: true, secure: false });
         res.redirect('/');
       }
@@ -172,6 +172,45 @@ app.get('/histori', (req, res) => {
         userData: userData,
         moment: moment,
       });
+    });
+});
+
+app.get('/histori/:id', (req, res) => {
+  if (!req.cookies.token) {
+    res.redirect('/login');
+  }
+  let userData = jwt.decode(req.cookies.token);
+  let user = Boolean(req.cookies.token);
+  fetch('http://localhost:3000/api/pinjam/' + req.params.id, {
+    headers: { Authorization: req.cookies.token },
+  })
+    .then((data) => data.json())
+    .then((data) => {
+      res.render('historiSingle', {
+        data: data.data,
+        user: user,
+        userData: userData,
+        moment: moment,
+      });
+    });
+});
+
+app.post('/pinjam/:id', (req, res) => {
+  if (!req.cookies.token) {
+    res.redirect('/login');
+  }
+  let token = req.cookies.token;
+  let body = {
+    jumlah: req.body.jumlah,
+  };
+  fetch('http://localhost:3000/api/pinjam/' + req.params.id, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: { 'Content-Type': 'application/json', Authorization: token },
+  })
+    .then((data) => data.json())
+    .then((data) => {
+      res.redirect('/histori/' + data.id);
     });
 });
 

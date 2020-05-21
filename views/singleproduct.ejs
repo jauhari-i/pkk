@@ -153,26 +153,29 @@
               <p>
                 <%= data[0].keterangan %>
               </p>
-              <div class="card_area d-flex justify-content-between align-items-center">
-                <div class="product_count">
-                  <span class="inumber-decrement" style="cursor: pointer;">-</span>
-                  <input
-                    class="input-number"
-                    type="text"
-                    value="1"
-                    min="0"
-                    max="<%= data[0].stok %>"
-                  />
-                  <span class="number-increment" style="cursor: pointer;">+</span>
+              <form action="/pinjam/<%= data[0].kode_tenda %>" method="post">
+                <div class="card_area d-flex justify-content-between align-items-center">
+                  <div class="product_count">
+                    <span class="inumber-decrement" style="cursor: pointer;">-</span>
+                    <input
+                      class="input-number"
+                      type="text"
+                      name="jumlah"
+                      value="1"
+                      min="0"
+                      max="<%= data[0].stok %>"
+                    />
+                    <span class="number-increment" style="cursor: pointer;">+</span>
+                  </div>
+                  <% if(user){ %>
+                  <button type="submit" class="btn_3">Sewa</button>
+                  <%}else{ %>
+                  <button class="genric-btn primary" style="cursor: not-allowed;" disabled>
+                    Sewa
+                  </button>
+                  <% } %>
                 </div>
-                <% if(user){ %>
-                <a href="#" class="btn_3">Sewa</a>
-                <%}else{ %>
-                <button class="genric-btn primary" style="cursor: not-allowed;" disabled>
-                  Sewa
-                </button>
-                <% } %>
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -308,6 +311,11 @@
                 <div class="single_product_text">
                   <h4><%= tenda[i].nama_tenda %></h4>
                   <h3>Rp. <%= tenda[i].tarif %></h3>
+                  <a
+                    href="/tenda/<%= tenda[i].kode_tenda %>"
+                    class="mx-1 my-1 genric-btn primary-border radius"
+                    >Lihat detail</a
+                  >
                 </div>
               </div>
               <% } %>

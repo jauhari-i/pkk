@@ -16,7 +16,6 @@ controller.tambahPinjam = (req, res) => {
         user: req.decoded.id,
         tenda: req.params.tenda,
         jumlah: req.body.jumlah,
-        total: req.body.total,
       };
       tambahPinjam(conn, data, (err, result) => {
         if (err) {

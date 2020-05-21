@@ -226,6 +226,11 @@
                 <div class="single_product_text">
                   <h4><%= data[i].nama_tenda %></h4>
                   <h3>Rp. <%= data[i].tarif %></h3>
+                  <a
+                    href="/tenda/<%= data[i].kode_tenda %>"
+                    class="mx-1 my-1 genric-btn primary-border radius"
+                    >Lihat detail</a
+                  >
                 </div>
               </div>
               <% } %>
