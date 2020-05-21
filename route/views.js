@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const app = express();
 
+// beranda
 app.get('/', (req, res) => {
   fetch('http://localhost:3000/api/tenda')
     .then((data) => data.json())
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
     });
 });
 
+// tenda
 app.get('/tenda/:id', (req, res) => {
   let id = req.params.id;
   fetch('http://localhost:3000/api/tenda/' + id)
@@ -51,6 +53,7 @@ app.get('/tenda/:id', (req, res) => {
     });
 });
 
+// login
 app.get('/login', (req, res) => {
   const body = {
     email: '',
@@ -74,6 +77,7 @@ app.get('/login', (req, res) => {
   });
 });
 
+// login
 app.post('/login', (req, res) => {
   const body = {
     email: req.body.email,
@@ -100,12 +104,14 @@ app.post('/login', (req, res) => {
     });
 });
 
+// logout
 app.get('/logout', (req, res) => {
   res.clearCookie('token');
   res.clearCookie('msgLogin');
   res.redirect('/login');
 });
 
+// register
 app.get('/register', (req, res) => {
   const body = {
     nm_user: '',
@@ -124,6 +130,7 @@ app.get('/register', (req, res) => {
   });
 });
 
+// register
 app.post('/register', (req, res) => {
   const body = {
     nm_user: req.body.name,
@@ -155,6 +162,7 @@ app.post('/register', (req, res) => {
     });
 });
 
+// histori
 app.get('/histori', (req, res) => {
   if (!req.cookies.token) {
     res.redirect('back');
@@ -175,6 +183,7 @@ app.get('/histori', (req, res) => {
     });
 });
 
+// histori satu
 app.get('/histori/:id', (req, res) => {
   if (!req.cookies.token) {
     res.redirect('/login');
@@ -195,6 +204,7 @@ app.get('/histori/:id', (req, res) => {
     });
 });
 
+// sewa
 app.post('/pinjam/:id', (req, res) => {
   if (!req.cookies.token) {
     res.redirect('/login');
