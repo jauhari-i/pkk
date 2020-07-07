@@ -6,24 +6,41 @@ const satuPinjam = require('../service/pinjam/satuPinjam');
 const ambil = require('../service/pinjam/ambil');
 const kembali = require('../service/pinjam/kembali');
 const userPinjam = require('../service/pinjam/userPinjam');
+const pinjamNew = require('../service/pinjam/pinjamNew');
+const hapusPinjam = require('../service/pinjam/hapusPinjam');
 
 controller.tambahPinjam = (req, res) => {
   req.getConnection((err, conn) => {
     if (err) {
       res.send(err);
     } else {
-      let data = {
-        user: req.decoded.id,
-        tenda: req.params.tenda,
-        jumlah: req.body.jumlah,
-      };
-      tambahPinjam(conn, data, (err, result) => {
-        if (err) {
-          res.json(err);
-        } else {
-          res.json(result);
-        }
-      });
+      if (req.decoded.role === 1) {
+        let data = {
+          user: req.body.user,
+          tenda: req.params.tenda,
+          jumlah: req.body.jumlah,
+        };
+        tambahPinjam(conn, data, (err, result) => {
+          if (err) {
+            res.json(err);
+          } else {
+            res.json(result);
+          }
+        });
+      } else {
+        let data = {
+          user: req.decoded.id,
+          tenda: req.params.tenda,
+          jumlah: req.body.jumlah,
+        };
+        tambahPinjam(conn, data, (err, result) => {
+          if (err) {
+            res.json(err);
+          } else {
+            res.json(result);
+          }
+        });
+      }
     }
   });
 };
@@ -34,6 +51,22 @@ controller.semuaPinjam = (req, res) => {
       res.send(err);
     } else {
       semuaPinjam(conn, (err, result) => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+};
+
+controller.pinjamNew = (req, res) => {
+  req.getConnection((err, conn) => {
+    if (err) {
+      res.send(err);
+    } else {
+      pinjamNew(conn, (err, result) => {
         if (err) {
           res.json(err);
         } else {
@@ -108,6 +141,22 @@ controller.kembali = (req, res) => {
       res.send(err);
     } else {
       kembali(conn, req.params.kode, (err, result) => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+};
+
+controller.hapus = (req, res) => {
+  req.getConnection((err, conn) => {
+    if (err) {
+      res.send(err);
+    } else {
+      hapusPinjam(conn, req.params.kode, (err, result) => {
         if (err) {
           res.json(err);
         } else {

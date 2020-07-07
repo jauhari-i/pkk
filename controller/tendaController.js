@@ -4,8 +4,11 @@ const tambah = require('../service/tenda/tambahTenda');
 const semuaTenda = require('../service/tenda/semuaTenda');
 const satuTenda = require('../service/tenda/satuTenda');
 const editTenda = require('../service/tenda/editTenda');
+const editTendaWithImg = require('../service/tenda/editTendaWithImg');
 const hapusTenda = require('../service/tenda/hapusTenda');
 const imgTenda = require('../service/tenda/getImg');
+const popularTenda = require('../service/tenda/popularTenda');
+const singleTenda = require('../service/tenda/singleTenda');
 
 //tambahTenda
 controller.tambahTenda = (req, res) => {
@@ -14,7 +17,7 @@ controller.tambahTenda = (req, res) => {
       res.send(err);
     } else {
       let data = req.body;
-      let file = req.file;
+      let file = data.file;
       tambah(conn, data, file, (err, result) => {
         if (err) {
           res.json(err);
@@ -61,6 +64,23 @@ controller.satuTenda = (req, res) => {
   });
 };
 
+controller.singleTenda = (req, res) => {
+  req.getConnection((err, conn) => {
+    if (err) {
+      res.send(err);
+    } else {
+      let id = req.params.kode;
+      singleTenda(conn, id, (err, result) => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+};
+
 //editTenda
 controller.editTenda = (req, res) => {
   req.getConnection((err, conn) => {
@@ -69,13 +89,25 @@ controller.editTenda = (req, res) => {
     } else {
       let id = req.params.kode;
       let data = req.body;
-      editTenda(conn, data, id, (err, result) => {
-        if (err) {
-          res.json(err);
-        } else {
-          res.json(result);
-        }
-      });
+      if (data.file) {
+        let file = data.file;
+        console.log(file);
+        editTendaWithImg(conn, data, file, id, (err, result) => {
+          if (err) {
+            res.json(err);
+          } else {
+            res.json(result);
+          }
+        });
+      } else {
+        editTenda(conn, data, id, (err, result) => {
+          if (err) {
+            res.json(err);
+          } else {
+            res.json(result);
+          }
+        });
+      }
     }
   });
 };
@@ -110,6 +142,22 @@ controller.getImg = (req, res) => {
           res.json(err);
         } else {
           res.sendFile(path.join(__dirname, '../public/img', result));
+        }
+      });
+    }
+  });
+};
+
+controller.getPopular = (req, res) => {
+  req.getConnection((err, conn) => {
+    if (err) {
+      res.send(err);
+    } else {
+      popularTenda(conn, (err, result) => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
         }
       });
     }

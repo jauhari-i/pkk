@@ -25,6 +25,8 @@ app.delete('/petugas/:kode', [cekToken, cekPetugas], petugasController.hapusPetu
 
 app.post('/tenda', [cekToken, cekPetugas, tendaImg], tendaController.tambahTenda);
 app.get('/tenda', tendaController.semuaTenda);
+app.get('/tenda/populer', tendaController.getPopular);
+app.get('/tenda/edit/:kode', tendaController.singleTenda);
 app.get('/tenda/:kode', tendaController.satuTenda);
 app.put('/tenda/:kode', [cekToken, cekPetugas], tendaController.editTenda);
 app.delete('/tenda/:kode', [cekToken, cekPetugas], tendaController.hapusTenda);
@@ -36,10 +38,14 @@ app.post('/register/user', authController.registerUser);
 app.post('/register/petugas', authController.registerPetugas);
 
 app.get('/pinjam', [cekToken, cekPetugas], pinjamController.semuaPinjam);
+app.get('/pinjam/new', [cekToken, cekPetugas], pinjamController.pinjamNew);
 app.get('/pinjam/user/:user', [cekToken], pinjamController.userPinjam);
 app.get('/pinjam/:kode', [cekToken], pinjamController.satuPinjam);
 app.post('/pinjam/:tenda', [cekToken], pinjamController.tambahPinjam);
 app.get('/ambil/:kode/:petugas', [cekToken, cekPetugas], pinjamController.ambil);
 app.get('/kembali/:kode', [cekToken, cekPetugas], pinjamController.kembali);
+app.delete('/pinjam/:kode', [cekToken, cekPetugas], pinjamController.hapus);
+
+app.get('/dashboard', [cekToken, cekPetugas], petugasController.dashboard);
 
 module.exports = app;

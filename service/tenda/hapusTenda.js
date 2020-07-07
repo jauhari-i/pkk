@@ -8,7 +8,7 @@ module.exports = async function hapusTenda(conn, id, cb) {
       if (err) {
         cb(err);
       } else {
-        conn.query('DELETE FROM tenda WHERE tenda = ?', id, (err, deleted) => {
+        conn.query('DELETE FROM tenda WHERE kd_tenda = ?', id, (err, deleted) => {
           if (err) {
             cb(err);
           } else if (deleted) {

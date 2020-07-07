@@ -1,26 +1,27 @@
 const controller = {};
-const tambah = require("../service/petugas/tambahPetugas");
-const semuaPetugas = require("../service/petugas/semuaPetugas");
-const satuPetugas = require("../service/petugas/satuPetugas");
-const hapusPetugas = require("../service/petugas/hapusPetugas");
-const editPetugas = require("../service/petugas/editPetugas");
+const tambah = require('../service/petugas/tambahPetugas');
+const semuaPetugas = require('../service/petugas/semuaPetugas');
+const satuPetugas = require('../service/petugas/satuPetugas');
+const hapusPetugas = require('../service/petugas/hapusPetugas');
+const editPetugas = require('../service/petugas/editPetugas');
+const dashboard = require('../service/petugas/dashboard');
 
 //tambahPetugas
 controller.tambahPetugas = (req, res) => {
   req.getConnection((err, conn) => {
     if (err) {
-      res.send(err)
+      res.send(err);
     } else {
-      let data = req.body
+      let data = req.body;
       tambah(conn, data, (err, result) => {
         if (err) {
-            res.json(err);
+          res.json(err);
         } else {
-            res.json(result);
+          res.json(result);
         }
-      })
+      });
     }
-  })
+  });
 };
 
 //semuaPetugas
@@ -85,6 +86,22 @@ controller.hapusPetugas = (req, res) => {
     } else {
       let id = req.params.kode;
       hapusPetugas(conn, id, (err, result) => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+};
+
+controller.dashboard = (req, res) => {
+  req.getConnection((err, conn) => {
+    if (err) {
+      res.send(err);
+    } else {
+      dashboard(conn, (err, result) => {
         if (err) {
           res.json(err);
         } else {

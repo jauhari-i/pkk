@@ -2,11 +2,20 @@ const express = require('express');
 const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const basicAuth = require('express-basic-auth');
 const app = express();
+const baseUrl = 'http://localhost:3000/api';
+const users = {
+  admin: 'tendaku123',
+  fufu: 'fufu123',
+  atalie: 'tata123',
+};
+const tendaImg = require('../upload/script/tendaImg');
+const { default: Axios } = require('axios');
 
 // beranda
 app.get('/', (req, res) => {
-  fetch('http://localhost:3000/api/tenda')
+  fetch(baseUrl + '/tenda')
     .then((data) => data.json())
     .then((data) => {
       let user = Boolean(req.cookies.token);
@@ -28,10 +37,10 @@ app.get('/', (req, res) => {
 // tenda
 app.get('/tenda/:id', (req, res) => {
   let id = req.params.id;
-  fetch('http://localhost:3000/api/tenda/' + id)
+  fetch(baseUrl + '/tenda/' + id)
     .then((tdata) => tdata.json())
     .then((tdata) => {
-      fetch('http://localhost:3000/api/tenda')
+      fetch(baseUrl + '/tenda')
         .then((data) => data.json())
         .then((data) => {
           let user = Boolean(req.cookies.token);
@@ -83,7 +92,7 @@ app.post('/login', (req, res) => {
     email: req.body.email,
     password: req.body.password,
   };
-  fetch('http://localhost:3000/api/login/user', {
+  fetch(baseUrl + '/login/user', {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' },
@@ -139,7 +148,7 @@ app.post('/register', (req, res) => {
     alamat: req.body.alamat,
     tlpn: req.body.tlpn,
   };
-  fetch('http://localhost:3000/api/register/user', {
+  fetch(baseUrl + '/register/user', {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' },
@@ -169,7 +178,7 @@ app.get('/histori', (req, res) => {
   }
   let userData = jwt.decode(req.cookies.token);
   let user = Boolean(req.cookies.token);
-  fetch('http://localhost:3000/api/pinjam/user/' + userData.id, {
+  fetch(baseUrl + '/pinjam/user/' + userData.id, {
     headers: { Authorization: req.cookies.token },
   })
     .then((data) => data.json())
@@ -190,7 +199,7 @@ app.get('/histori/:id', (req, res) => {
   }
   let userData = jwt.decode(req.cookies.token);
   let user = Boolean(req.cookies.token);
-  fetch('http://localhost:3000/api/pinjam/' + req.params.id, {
+  fetch(baseUrl + '/pinjam/' + req.params.id, {
     headers: { Authorization: req.cookies.token },
   })
     .then((data) => data.json())
@@ -213,7 +222,7 @@ app.post('/pinjam/:id', (req, res) => {
   let body = {
     jumlah: req.body.jumlah,
   };
-  fetch('http://localhost:3000/api/pinjam/' + req.params.id, {
+  fetch(baseUrl + '/pinjam/' + req.params.id, {
     method: 'POST',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json', Authorization: token },
@@ -221,6 +230,307 @@ app.post('/pinjam/:id', (req, res) => {
     .then((data) => data.json())
     .then((data) => {
       res.redirect('/histori/' + data.id);
+    });
+});
+
+app.get(
+  '/petugas/login',
+  basicAuth({
+    users,
+    challenge: true,
+  }),
+  (req, res) => {
+    const body = {
+      email: '',
+      password: '',
+    };
+    if (req.cookies.admintoken) {
+      res.redirect('/petugas/dashboard');
+    }
+    res.render('adminLogin', { body });
+  }
+);
+
+app.post(
+  '/petugas/login',
+  basicAuth({
+    users,
+    challenge: true,
+  }),
+  (req, res) => {
+    const data = {
+      email: req.body.email,
+      password: req.body.password,
+    };
+    fetch(baseUrl + '/login/petugas', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((result) => result.json())
+      .then((result) => {
+        if (result.status === 400) {
+          res.render('login', {
+            body: body,
+          });
+        } else {
+          res.cookie('admintoken', result.token, { httpOnly: true, secure: false });
+          res.redirect('/petugas/dashboard');
+        }
+      });
+  }
+);
+
+app.get('/petugas/logout', (req, res) => {
+  res.clearCookie('admintoken');
+  res.redirect('/petugas/login');
+});
+
+app.get(
+  '/petugas/dashboard',
+  basicAuth({
+    users,
+    challenge: true,
+  }),
+  (req, res) => {
+    if (!req.cookies.admintoken) {
+      res.clearCookie('admintoken');
+      res.redirect('/petugas/login');
+    }
+    fetch(baseUrl + '/tenda/populer', { headers: { Authorization: req.cookies.admintoken } })
+      .then((tenda) => tenda.json())
+      .then((tenda) => {
+        let userData = jwt.decode(req.cookies.admintoken);
+        fetch(baseUrl + '/dashboard', { headers: { Authorization: req.cookies.admintoken } })
+          .then((dashboard) => dashboard.json())
+          .then((dashboard) => {
+            fetch(baseUrl + '/pinjam/new', { headers: { Authorization: req.cookies.admintoken } })
+              .then((pinjamNew) => pinjamNew.json())
+              .then((pinjamNew) => {
+                res.render('dashboard', {
+                  populer: tenda.data,
+                  userData: userData,
+                  dash: dashboard.data,
+                  peminjaman: pinjamNew.data,
+                });
+              });
+          });
+      });
+  }
+);
+
+app.get('/petugas/dashboard/tenda', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let userData = jwt.decode(req.cookies.admintoken);
+  fetch(baseUrl + '/tenda')
+    .then((tenda) => tenda.json())
+    .then((tenda) => {
+      res.render('tendaView', { userData: userData, tenda: tenda.data });
+    });
+});
+
+app.get('/petugas/dashboard/tenda/tambah', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let userData = jwt.decode(req.cookies.admintoken);
+  res.render('tendaAdd', { userData });
+});
+
+app.post('/petugas/add/tenda', [basicAuth({ users, challenge: true }), tendaImg], (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let data = {
+    nm_tenda: req.body.nm_tenda,
+    kapasitas: req.body.kapasitas,
+    ukuran: req.body.ukuran,
+    bahan: req.body.bahan,
+    berat: req.body.berat,
+    kelengkapan: req.body.kelengkapan,
+    keterangan: req.body.keterangan,
+    tarif: req.body.tarif,
+    stok: req.body.stok,
+    durasi: req.body.durasi,
+    file: req.file ? req.file : null,
+  };
+  Axios.post(`${baseUrl}/tenda`, data, {
+    headers: { Authorization: req.cookies.admintoken },
+  })
+    .then((result) => {
+      res.redirect('/petugas/dashboard/tenda');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.get('/petugas/dashboard/tenda/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let userData = jwt.decode(req.cookies.admintoken);
+  fetch(baseUrl + '/tenda/' + req.params.id)
+    .then((tenda) => tenda.json())
+    .then((tenda) => {
+      res.render('tendaSingle', { userData: userData, tenda: tenda.data[0] });
+    });
+});
+
+app.get('/petugas/dashboard/tenda/edit/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let userData = jwt.decode(req.cookies.admintoken);
+  fetch(baseUrl + '/tenda/edit/' + req.params.id)
+    .then((tenda) => tenda.json())
+    .then((tenda) => {
+      res.render('tendaEdit', { userData: userData, tenda: tenda.data[0] });
+    });
+});
+
+app.post('/petugas/edit/tenda', [basicAuth({ users, challenge: true }), tendaImg], (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let data = {
+    nm_tenda: req.body.nm_tenda,
+    kapasitas: req.body.kapasitas,
+    ukuran: req.body.ukuran,
+    bahan: req.body.bahan,
+    berat: req.body.berat,
+    kelengkapan: req.body.kelengkapan,
+    keterangan: req.body.keterangan,
+    tarif: req.body.tarif,
+    stok: req.body.stok,
+    durasi: req.body.durasi,
+    file: req.file ? req.file : null,
+  };
+  let id = req.body.kd_tenda;
+  Axios.put(`${baseUrl}/tenda/${id}`, data, {
+    headers: { Authorization: req.cookies.admintoken },
+  })
+    .then((result) => {
+      res.redirect('/petugas/dashboard/tenda/' + id);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.get('/petugas/delete/tenda/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  Axios.delete(baseUrl + '/tenda/' + req.params.id, {
+    headers: { Authorization: req.cookies.admintoken },
+  }).then((result) => {
+    res.redirect('/petugas/dashboard/tenda');
+  });
+});
+
+app.get('/petugas/dashboard/peminjaman', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  fetch(baseUrl + '/pinjam', { headers: { Authorization: req.cookies.admintoken } })
+    .then((pinjam) => pinjam.json())
+    .then((pinjam) => {
+      let userData = jwt.decode(req.cookies.admintoken);
+      res.render('peminjaman', { userData, pinjam: pinjam.data });
+    });
+});
+
+app.get('/petugas/terima/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let userData = jwt.decode(req.cookies.admintoken);
+  fetch(baseUrl + '/ambil/' + req.params.id + '/' + userData.id, {
+    headers: { Authorization: req.cookies.admintoken },
+  })
+    .then((result) => result.json())
+    .then((result) => {
+      res.redirect('/petugas/dashboard/peminjaman');
+    });
+});
+
+app.get('/petugas/kembali/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  fetch(baseUrl + '/kembali/' + req.params.id, {
+    headers: { Authorization: req.cookies.admintoken },
+  })
+    .then((result) => result.json())
+    .then((result) => {
+      res.redirect('/petugas/dashboard/peminjaman');
+    });
+});
+
+app.get('/petugas/pinjam/hapus/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+
+  Axios.delete(baseUrl + '/pinjam/' + req.params.id, {
+    headers: { Authorization: req.cookies.admintoken },
+  }).then((result) => {
+    res.redirect('/petugas/dashboard/peminjaman');
+  });
+});
+
+app.get(
+  '/petugas/dashboard/peminjaman/tambah',
+  basicAuth({ users, challenge: true }),
+  (req, res) => {
+    if (!req.cookies.admintoken) {
+      res.redirect('/petugas/login');
+    }
+    fetch(baseUrl + '/tenda')
+      .then((data) => data.json())
+      .then((data) => {
+        fetch(baseUrl + '/user', { headers: { Authorization: req.cookies.admintoken } })
+          .then((user) => user.json())
+          .then((user) => {
+            let userData = jwt.decode(req.cookies.admintoken);
+            res.render('peminjamanAdd', { userData, tenda: data.data, users: user.data });
+          });
+      });
+  }
+);
+
+app.post('/petugas/pinjam/add', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  const data = req.body;
+  if (!data.kd_tenda || !data.kd_user) {
+    res.redirect('/petugas/dashboard/peminjaman/tambah');
+  }
+  Axios.post(
+    `${baseUrl}/pinjam/${data.kd_tenda}`,
+    { user: data.kd_user, jumlah: data.jumlah },
+    { headers: { Authorization: req.cookies.admintoken } }
+  ).then((result) => {
+    res.redirect('/petugas/dashboard/peminjaman');
+  });
+});
+
+app.get('/petugas/dashboard/peminjaman/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+
+  fetch(baseUrl + '/pinjam/' + req.params.id, {
+    headers: { Authorization: req.cookies.admintoken },
+  })
+    .then((data) => data.json())
+    .then((data) => {
+      let userData = jwt.decode(req.cookies.admintoken);
+      res.render('peminjamanSingle', { userData, data: data.data[0], moment });
     });
 });
 
