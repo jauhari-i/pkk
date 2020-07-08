@@ -8,11 +8,14 @@
       name="viewport"
     />
 
-    <title>Dashboard - Tenda :: Tendaku</title>
+    <title>Dashboard - User :: Tendaku</title>
     <!-- Favicon-->
     <link rel="icon" href="img/favicon.png" type="image/x-icon" />
 
     <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="plugins/footable-bootstrap/css/footable.bootstrap.min.css" />
+    <link rel="stylesheet" href="plugins/footable-bootstrap/css/footable.standalone.min.css" />
+    <link rel="stylesheet" href="plugins/jquery-datatable/dataTables.bootstrap4.min.css" />
 
     <!-- Custom Css -->
     <link rel="stylesheet" href="admincss/style.min.css" />
@@ -64,12 +67,12 @@
             <a href="/petugas/dashboard"><i class="zmdi zmdi-home"></i><span>Dashboard</span></a>
           </li>
 
-          <li class="active open">
+          <li>
             <a href="javascript:void(0);" class="menu-toggle"
               ><i class="zmdi zmdi-shopping-cart"></i><span>Tenda</span></a
             >
             <ul class="ml-menu">
-              <li><a href="/petugas/dashboard/tenda">Tenda List</a></li>
+              <li class="active"><a href="/petugas/dashboard/tenda">Tenda List</a></li>
               <li><a href="/petugas/dashboard/tenda/tambah">Tambah Tenda</a></li>
             </ul>
           </li>
@@ -79,15 +82,15 @@
             >
             <ul class="ml-menu">
               <li><a href="/petugas/dashboard/peminjaman">Peminjaman List</a></li>
-              <li><a href="#">Tambah Peminjaman</a></li>
+              <li><a href="/petugas/dashboard/peminjaman/tambah">Tambah Peminjaman</a></li>
             </ul>
           </li>
-          <li>
+          <li class="active open">
             <a href="javascript:void(0);" class="menu-toggle"
               ><i class="zmdi zmdi-accounts-list"></i><span>User</span></a
             >
             <ul class="ml-menu">
-              <li><a href="/petugas/dashboard/user">Users List</a></li>
+              <li class="active"><a href="/petugas/dashboard/user">Users List</a></li>
               <li><a href="/petugas/dashboard/user/tambah">Tambah User</a></li>
             </ul>
           </li>
@@ -114,8 +117,7 @@
                   <a href="/petugas/dashboard"><i class="zmdi zmdi-home"></i> Tendaku</a>
                 </li>
                 <li class="breadcrumb-item">Dashboard</li>
-                <li class="breadcrumb-item">Tenda</li>
-                <li class="breadcrumb-item active"><%= tenda.nama_tenda %></li>
+                <li class="breadcrumb-item active">Users</li>
               </ul>
               <button class="btn btn-primary btn-icon mobile_menu" type="button">
                 <i class="zmdi zmdi-sort-amount-desc"></i>
@@ -124,94 +126,78 @@
           </div>
         </div>
       </div>
-
       <div class="container-fluid">
         <div class="row clearfix">
           <div class="col-lg-12">
             <div class="card">
               <div class="body">
-                <div class="row">
-                  <div class="col-xl-3 col-lg-4 col-md-12">
-                    <div class="preview preview-pic tab-content">
-                      <div class="tab-pane active" id="product_1">
-                        <img
-                          src="/api/tenda/img/<%= tenda.kode_tenda %>"
-                          class="img-fluid"
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                    <ul class="preview thumbnail nav nav-tabs">
-                      <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#product_1"
-                          ><img src="/api/tenda/img/<%= tenda.kode_tenda %>" alt=""
-                        /></a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="col-xl-9 col-lg-8 col-md-12">
-                    <div class="product details">
-                      <h3 class="product-title mb-0"><%= tenda.nama_tenda %></h3>
-                      <h5 class="price mt-2">
-                        Harga: <span class="col-amber"><%= tenda.tarif %></span>
-                      </h5>
-                      <hr />
-                      <p class="product-description"><%= tenda.keterangan %></p>
-                      <h6 class="sizes">
-                        Ukuran:
-                        <span class="size"><%= tenda.ukuran %></span>
-                      </h6>
-                      <h6 class="sizes">
-                        Stok:
-                        <span class="size"><%= tenda.stok %> Unit</span>
-                      </h6>
-                      <ul class="list-group" style="text-transform: capitalize;">
-                        <li class="list-group-item">Kapasitas : <%= tenda.kapasitas %></li>
-                        <li class="list-group-item">Bahan : <%= tenda.bahan %></li>
-                        <li class="list-group-item">Berat : <%= tenda.berat %></li>
-                        <li class="list-group-item">Kelengkapan : <%= tenda.kelengkapan %></li>
-                        <li class="list-group-item">Durasi : <%= tenda.durasi %></li>
-                      </ul>
-                    </div>
-                  </div>
+                <div class="table-responsive">
+                  <table
+                    class="table product_item_list c_table theme-color mb-0 dataTable js-exportable"
+                  >
+                    <thead>
+                      <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Alamat</th>
+                        <th>Telepon</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% users.map((item, i) => { %>
+                      <tr>
+                        <td><%= i+1 %></td>
+                        <td><%= item.nama_user %></td>
+                        <td><%= item.email %></td>
+                        <td><%= item.alamat %></td>
+                        <td>+62 <%= item.telepon %></td>
+                        <td>
+                          <a
+                            href="/petugas/dashboard/user/edit/<%= item.kode_user %>"
+                            class="btn btn-warning waves-effect waves-float btn-sm waves-green"
+                            ><i class="zmdi zmdi-edit"></i
+                          ></a>
+                          <a
+                            href="/petugas/hapus/user/<%= item.kode_user %>"
+                            class="btn btn-danger waves-effect waves-float btn-sm waves-red"
+                            ><i class="zmdi zmdi-delete"></i
+                          ></a>
+                        </td>
+                      </tr>
+                      <%}) %>
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="body">
-                <ul class="nav">
-                  <li class="nav-item">
-                    <a class="btn btn-primary mr-1" href="/petugas/dashboard/tenda">Kembali</a>
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      class="btn btn-warning mr-1"
-                      href="/petugas/dashboard/tenda/edit/<%= tenda.kode_tenda %>"
-                      >Edit</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      class="btn btn-danger mr-1"
-                      href="/petugas/delete/tenda/<%= tenda.kode_tenda %>"
-                      >Hapus</a
-                    >
-                  </li>
-                </ul>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
+    <script src="adminbundles/footable.bundle.js"></script>
+    <script src="adminbundles/mainscripts.bundle.js"></script>
+    <!-- Custom Js -->
+    <script src="adminjs/pages/tables/footable.js"></script>
+    <!-- Custom Js -->
+    <!-- Jquery Core Js -->
     <script src="adminbundles/libscripts.bundle.js"></script>
     <!-- Lib Scripts Plugin Js -->
     <script src="adminbundles/vendorscripts.bundle.js"></script>
     <!-- Lib Scripts Plugin Js -->
 
+    <!-- Jquery DataTable Plugin Js -->
+    <script src="adminbundles/datatablescripts.bundle.js"></script>
+    <script src="plugins/jquery-datatable/buttons/dataTables.buttons.min.js"></script>
+    <script src="plugins/jquery-datatable/buttons/buttons.bootstrap4.min.js"></script>
+    <script src="plugins/jquery-datatable/buttons/buttons.colVis.min.js"></script>
+    <script src="plugins/jquery-datatable/buttons/buttons.flash.min.js"></script>
+    <script src="plugins/jquery-datatable/buttons/buttons.html5.min.js"></script>
+    <script src="plugins/jquery-datatable/buttons/buttons.print.min.js"></script>
+
     <script src="adminbundles/mainscripts.bundle.js"></script>
     <!-- Custom Js -->
+    <script src="adminjs/pages/tables/jquery-datatable.js"></script>
   </body>
 </html>

@@ -8,18 +8,18 @@
       name="viewport"
     />
 
-    <title>Dashboard - Tenda :: Tendaku</title>
+    <title>Dashboard - User :: Tendaku</title>
     <!-- Favicon-->
     <link rel="icon" href="img/favicon.png" type="image/x-icon" />
 
     <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="plugins/dropify/css/dropify.min.css" />
 
     <!-- Custom Css -->
     <link rel="stylesheet" href="admincss/style.min.css" />
   </head>
 
   <body class="theme-blush">
-    <!-- Page Loader -->
     <div class="page-loader-wrapper">
       <div class="loader">
         <div class="m-t-30">
@@ -28,7 +28,6 @@
         <p>Please wait...</p>
       </div>
     </div>
-
     <!-- Overlay For Sidebars -->
     <div class="overlay"></div>
 
@@ -55,7 +54,7 @@
                 ><img src="images/profile_av.jpg" alt="User"
               /></a>
               <div class="detail">
-                <h4><%= userData.nama %></h4>
+                <h4><%= userData.nama ? userData.nama : "" %></h4>
                 <small>Petugas Tendaku</small>
               </div>
             </div>
@@ -64,7 +63,7 @@
             <a href="/petugas/dashboard"><i class="zmdi zmdi-home"></i><span>Dashboard</span></a>
           </li>
 
-          <li class="active open">
+          <li>
             <a href="javascript:void(0);" class="menu-toggle"
               ><i class="zmdi zmdi-shopping-cart"></i><span>Tenda</span></a
             >
@@ -79,10 +78,10 @@
             >
             <ul class="ml-menu">
               <li><a href="/petugas/dashboard/peminjaman">Peminjaman List</a></li>
-              <li><a href="#">Tambah Peminjaman</a></li>
+              <li><a href="/petugas/dashboard/peminjaman/tambah">Tambah Peminjaman</a></li>
             </ul>
           </li>
-          <li>
+          <li class="active open">
             <a href="javascript:void(0);" class="menu-toggle"
               ><i class="zmdi zmdi-accounts-list"></i><span>User</span></a
             >
@@ -114,8 +113,9 @@
                   <a href="/petugas/dashboard"><i class="zmdi zmdi-home"></i> Tendaku</a>
                 </li>
                 <li class="breadcrumb-item">Dashboard</li>
-                <li class="breadcrumb-item">Tenda</li>
-                <li class="breadcrumb-item active"><%= tenda.nama_tenda %></li>
+                <li class="breadcrumb-item">User</li>
+                <li class="breadcrumb-item">Edit</li>
+                <li class="breadcrumb-item active"><%= user.nama_user %></li>
               </ul>
               <button class="btn btn-primary btn-icon mobile_menu" type="button">
                 <i class="zmdi zmdi-sort-amount-desc"></i>
@@ -127,79 +127,103 @@
 
       <div class="container-fluid">
         <div class="row clearfix">
-          <div class="col-lg-12">
+          <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
               <div class="body">
-                <div class="row">
-                  <div class="col-xl-3 col-lg-4 col-md-12">
-                    <div class="preview preview-pic tab-content">
-                      <div class="tab-pane active" id="product_1">
-                        <img
-                          src="/api/tenda/img/<%= tenda.kode_tenda %>"
-                          class="img-fluid"
-                          alt=""
+                <form
+                  class="form-horizontal"
+                  action="/petugas/edit/user/<%= user.kode_user %>"
+                  method="POST"
+                >
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Nama</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <input
+                          type="text"
+                          id="email_address_2"
+                          name="nm_user"
+                          class="form-control"
+                          placeholder="Nama"
+                          value="<%= user.nama_user %>"
+                          required
                         />
                       </div>
                     </div>
-                    <ul class="preview thumbnail nav nav-tabs">
-                      <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#product_1"
-                          ><img src="/api/tenda/img/<%= tenda.kode_tenda %>" alt=""
-                        /></a>
-                      </li>
-                    </ul>
                   </div>
-                  <div class="col-xl-9 col-lg-8 col-md-12">
-                    <div class="product details">
-                      <h3 class="product-title mb-0"><%= tenda.nama_tenda %></h3>
-                      <h5 class="price mt-2">
-                        Harga: <span class="col-amber"><%= tenda.tarif %></span>
-                      </h5>
-                      <hr />
-                      <p class="product-description"><%= tenda.keterangan %></p>
-                      <h6 class="sizes">
-                        Ukuran:
-                        <span class="size"><%= tenda.ukuran %></span>
-                      </h6>
-                      <h6 class="sizes">
-                        Stok:
-                        <span class="size"><%= tenda.stok %> Unit</span>
-                      </h6>
-                      <ul class="list-group" style="text-transform: capitalize;">
-                        <li class="list-group-item">Kapasitas : <%= tenda.kapasitas %></li>
-                        <li class="list-group-item">Bahan : <%= tenda.bahan %></li>
-                        <li class="list-group-item">Berat : <%= tenda.berat %></li>
-                        <li class="list-group-item">Kelengkapan : <%= tenda.kelengkapan %></li>
-                        <li class="list-group-item">Durasi : <%= tenda.durasi %></li>
-                      </ul>
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Email</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <input
+                          type="email"
+                          id="email_address_2"
+                          class="form-control"
+                          name="email"
+                          required
+                          disabled
+                          value="<%= user.email %>"
+                          placeholder="Email"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="body">
-                <ul class="nav">
-                  <li class="nav-item">
-                    <a class="btn btn-primary mr-1" href="/petugas/dashboard/tenda">Kembali</a>
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      class="btn btn-warning mr-1"
-                      href="/petugas/dashboard/tenda/edit/<%= tenda.kode_tenda %>"
-                      >Edit</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      class="btn btn-danger mr-1"
-                      href="/petugas/delete/tenda/<%= tenda.kode_tenda %>"
-                      >Hapus</a
-                    >
-                  </li>
-                </ul>
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Alamat</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <textarea
+                          rows="5"
+                          class="form-control no-resize"
+                          name="alamat"
+                          placeholder="Alamat...."
+                        >
+<%= user.alamat %></textarea
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Telepon</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text" style="font-size: 12px;">+62</span>
+                          </div>
+                          <input
+                            type="number"
+                            id="email_address_2"
+                            class="form-control"
+                            name="tlp"
+                            value="<%= user.tlpn %>"
+                            placeholder="Ex: 888888888"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row clearfix">
+                    <div class="col-sm-8 offset-sm-6">
+                      <button
+                        type="submit"
+                        value="Submit"
+                        formmethod="POST"
+                        class="btn btn-raised btn-primary btn-lg btn-round waves-effect"
+                      >
+                        Simpan
+                      </button>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -211,7 +235,9 @@
     <script src="adminbundles/vendorscripts.bundle.js"></script>
     <!-- Lib Scripts Plugin Js -->
 
+    <script src="plugins/dropify/js/dropify.min.js"></script>
     <script src="adminbundles/mainscripts.bundle.js"></script>
     <!-- Custom Js -->
+    <script src="adminjs/pages/forms/dropify.js"></script>
   </body>
 </html>

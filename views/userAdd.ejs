@@ -8,13 +8,12 @@
       name="viewport"
     />
 
-    <title>Dashboard - Peminjaman :: Tendaku</title>
+    <title>Dashboard - User :: Tendaku</title>
     <!-- Favicon-->
     <link rel="icon" href="img/favicon.png" type="image/x-icon" />
 
     <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="plugins/dropify/css/dropify.min.css" />
-    <link href="plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
 
     <!-- Custom Css -->
     <link rel="stylesheet" href="admincss/style.min.css" />
@@ -73,24 +72,22 @@
               <li><a href="/petugas/dashboard/tenda/tambah">Tambah Tenda</a></li>
             </ul>
           </li>
-          <li class="active open">
+          <li>
             <a href="javascript:void(0);" class="menu-toggle"
               ><i class="zmdi zmdi-grid"></i><span>Peminjaman</span></a
             >
             <ul class="ml-menu">
               <li><a href="/petugas/dashboard/peminjaman">Peminjaman List</a></li>
-              <li class="active">
-                <a href="/petugas/dashboard/peminjaman/tambah">Tambah Peminjaman</a>
-              </li>
+              <li><a href="/petugas/dashboard/peminjaman/tambah">Tambah Peminjaman</a></li>
             </ul>
           </li>
-          <li>
+          <li class="active open">
             <a href="javascript:void(0);" class="menu-toggle"
               ><i class="zmdi zmdi-accounts-list"></i><span>User</span></a
             >
             <ul class="ml-menu">
               <li><a href="/petugas/dashboard/user">Users List</a></li>
-              <li><a href="/petugas/dashboard/user/tambah">Tambah User</a></li>
+              <li class="active"><a href="/petugas/dashboard/user/tambah">Tambah User</a></li>
             </ul>
           </li>
           <li>
@@ -116,7 +113,7 @@
                   <a href="/petugas/dashboard"><i class="zmdi zmdi-home"></i> Tendaku</a>
                 </li>
                 <li class="breadcrumb-item">Dashboard</li>
-                <li class="breadcrumb-item">Peminjaman</li>
+                <li class="breadcrumb-item">User</li>
                 <li class="breadcrumb-item active">Tambah</li>
               </ul>
               <button class="btn btn-primary btn-icon mobile_menu" type="button">
@@ -132,50 +129,109 @@
           <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
               <div class="body">
-                <form class="form-horizontal" action="/petugas/pinjam/add" method="POST">
+                <form
+                  class="form-horizontal"
+                  action="/petugas/add/user"
+                  method="POST"
+                >
                   <div class="row clearfix">
                     <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
-                      <label for="email_address_2">Tenda</label>
-                    </div>
-                    <div class="col-lg-10 col-md-10 col-sm-8">
-                      <div class="form-group">
-                        <select required name="kd_tenda" class="form-control show-tick">
-                          <option>-- Pilih Tenda --</option>
-                          <% tenda.map((item) => { %>
-                          <option value="<%= item.kode_tenda %>"><%= item.nama_tenda %></option>
-                          <% }) %>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row clearfix">
-                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
-                      <label for="email_address_2">User</label>
-                    </div>
-                    <div class="col-lg-10 col-md-10 col-sm-8">
-                      <div class="form-group">
-                        <select required name="kd_user" class="form-control show-tick">
-                          <option>-- Pilih User --</option>
-                          <% users.map((item) => { %>
-                          <option value="<%= item.kode_user %>"><%= item.nama_user %></option>
-                          <%}) %>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row clearfix">
-                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
-                      <label for="email_address_2">Jumlah</label>
+                      <label for="email_address_2">Nama</label>
                     </div>
                     <div class="col-lg-10 col-md-10 col-sm-8">
                       <div class="form-group">
                         <input
-                          type="number"
+                          type="text"
+                          id="email_address_2"
+                          name="nm_user"
+                          class="form-control"
+                          placeholder="Nama"
                           required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Email</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <input
+                          type="email"
                           id="email_address_2"
                           class="form-control"
-                          name="jumlah"
-                          placeholder="Stok Tenda"
+                          name="email"
+                          required
+                          placeholder="Email"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Alamat</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <textarea
+                          rows="5"
+                          class="form-control no-resize"
+                          name="alamat"
+                          placeholder="Alamat...."
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Telepon</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text" style="font-size: 12px;">+62</span>
+                          </div>
+                          <input
+                            type="number"
+                            id="email_address_2"
+                            class="form-control"
+                            name="tlp"
+                            placeholder="Ex: 888888888"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Kata Sandi</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <input
+                          type="password"
+                          id="email_address_2"
+                          class="form-control"
+                          name="password"
+                          placeholder="Kata Sandi"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row clearfix">
+                    <div class="col-lg-2 col-md-2 col-sm-4 form-control-label">
+                      <label for="email_address_2">Konfirmasi Kata Sandi</label>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-8">
+                      <div class="form-group">
+                        <input
+                          type="password"
+                          id="email_address_2"
+                          class="form-control"
+                          name="password2"
+                          placeholder="Konfirmasi Kata Sandi"
                         />
                       </div>
                     </div>
@@ -185,9 +241,10 @@
                       <button
                         type="submit"
                         value="Submit"
+                        formmethod="POST"
                         class="btn btn-raised btn-primary btn-lg btn-round waves-effect"
                       >
-                        Tambah
+                        Simpan
                       </button>
                     </div>
                   </div>
