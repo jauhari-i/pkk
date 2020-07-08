@@ -18,6 +18,8 @@ app.use('/petugas/dashboard/tenda/tambah', express.static(path.join(__dirname, '
 app.use('/petugas/dashboard/peminjaman', express.static(path.join(__dirname, 'public')));
 app.use('/petugas/dashboard/user/tambah', express.static(path.join(__dirname, 'public')));
 app.use('/petugas/dashboard/user/edit', express.static(path.join(__dirname, 'public')));
+app.use('/petugas/dashboard/ps', express.static(path.join(__dirname, 'public')));
+app.use('/petugas/dashboard/ps/edit', express.static(path.join(__dirname, 'public')));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

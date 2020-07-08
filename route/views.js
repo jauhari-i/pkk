@@ -623,9 +623,84 @@ app.get('/petugas/hapus/user/:id', basicAuth({ users, challenge: true }), (req, 
   });
 });
 
-// single user
-
 // petugas
+
+app.get('/petugas/dashboard/ps', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let userData = jwt.decode(req.cookies.admintoken);
+  fetch(`${baseUrl}/petugas`, { headers: { Authorization: req.cookies.admintoken } })
+    .then((pg) => pg.json())
+    .then((pg) => {
+      res.render('petugasList', { userData, petugas: pg.data });
+    });
+});
+
+app.get('/petugas/dashboard/ps/tambah', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let userData = jwt.decode(req.cookies.admintoken);
+  res.render('petugasAdd', { userData });
+});
+
+app.post('/petugas/add/petugas', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  const data = {
+    nm_petugas: req.body.nm_petugas,
+    email: req.body.email,
+    password: req.body.password,
+  };
+  Axios.post(`${baseUrl}/petugas`, data, {
+    headers: { Authorization: req.cookies.admintoken },
+  }).then((result) => {
+    res.redirect('/petugas/dashboard/ps');
+  });
+});
+
+app.get('/petugas/dashboard/ps/edit/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  let userData = jwt.decode(req.cookies.admintoken);
+  fetch(`${baseUrl}/petugas/${req.params.id}`, {
+    headers: { Authorization: req.cookies.admintoken },
+  })
+    .then((petugas) => petugas.json())
+    .then((petugas) => {
+      res.render('petugasEdit', { userData, petugas: petugas.data[0] });
+    });
+});
+
+app.post('/petugas/edit/petugas/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  Axios.put(
+    `${baseUrl}/petugas/${req.params.id}`,
+    { nm_petugas: req.body.nm_petugas },
+    {
+      headers: { Authorization: req.cookies.admintoken },
+    }
+  ).then((result) => {
+    res.redirect('/petugas/dashboard/ps');
+  });
+});
+
+app.get('/petugas/hapus/ps/:id', basicAuth({ users, challenge: true }), (req, res) => {
+  if (!req.cookies.admintoken) {
+    res.redirect('/petugas/login');
+  }
+  Axios.delete(`${baseUrl}/petugas/${req.params.id}`, {
+    headers: { Authorization: req.cookies.admintoken },
+  }).then((result) => {
+    res.redirect('/petugas/dashboard/ps');
+  });
+});
+
 // profil
 
 module.exports = app;
